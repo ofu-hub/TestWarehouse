@@ -1,0 +1,44 @@
+﻿@{
+    ViewData["Title"] = "Склад";
+    var pallets = ViewData["Pallets"] as List<TestWarehouse.Models.Pallet>;
+    var groupedPallets = ViewData["GroupedPallets"] as List<IGrouping<DateTime, TestWarehouse.Models.Pallet>>;
+    var top3Pallets = ViewData["Top3Pallets"] as List<TestWarehouse.Models.Pallet>;
+}
+
+<h1>Склад - Паллеты</h1>
+
+<p>
+    <a asp-action="CreatePallet" class="btn btn-primary">Добавить паллету</a>
+</p>
+
+@if (pallets != null)
+{
+    @foreach (var pallet in pallets)
+    {
+        <li>
+            Паллет ID: @pallet.Id, Вес: @pallet.Weight кг, Объем: @pallet.GetVolume() м³
+            <a asp-action="DeletePallet" asp-route-id="@pallet.Id" class="btn btn-danger">Удалить паллету</a>
+            <a asp-action="CreateBox" asp-route-palletId="@pallet.Id" class="btn btn-success">Добавить коробку</a>
+        </li>
+        <ul>
+            @if (pallet.Boxes.Any())
+            {
+                @foreach (var box in pallet.Boxes)
+                {
+                    <li>
+                        Коробка ID: @box.Id, Вес: @box.Weight кг, Объем: @box.GetVolume() м³
+                        <a asp-action="DeleteBox" asp-route-id="@box.Id" class="btn btn-danger">Удалить коробку</a>
+                    </li>
+                }
+            }
+            else
+            {
+                <p>На паллете нет коробок</p>
+            }
+        </ul>
+    }
+}
+else
+{
+    <p>Список паллетов пуст</p>
+}
